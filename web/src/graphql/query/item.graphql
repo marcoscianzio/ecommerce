@@ -1,0 +1,17 @@
+query Item($itemId: String!) {
+  item(id: $itemId) {
+    id
+    name
+    description
+    unitAmount
+    images {
+      id
+      url
+    }
+    liked
+    available
+    stock
+    createdAt
+    updatedAt
+  }
+}

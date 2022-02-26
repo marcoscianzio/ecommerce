@@ -1,0 +1,3 @@
+mutation removeItemFromCart($itemId: String!, $whole: Boolean) {
+  removeItemFromCart(itemId: $itemId, whole: $whole)
+}

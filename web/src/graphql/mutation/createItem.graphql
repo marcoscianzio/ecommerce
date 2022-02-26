@@ -1,0 +1,16 @@
+mutation createItem($values: CreateItemInput!) {
+  createItem(values: $values) {
+    id
+    name
+    description
+    images {
+      url
+      id
+    }
+    stock
+    stripeId
+    unitAmount
+    createdAt
+    updatedAt
+  }
+}

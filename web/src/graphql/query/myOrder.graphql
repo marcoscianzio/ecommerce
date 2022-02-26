@@ -1,0 +1,24 @@
+query myOrders {
+  myOrders {
+    id
+    stripeId
+    userId
+    cartId
+    cart {
+      id
+      userId
+      cartItems {
+        itemId
+        item {
+          id
+          name
+          stripeId
+          description
+          unitAmount
+        }
+        total
+      }
+      total
+    }
+  }
+}

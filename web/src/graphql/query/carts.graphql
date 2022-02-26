@@ -1,0 +1,7 @@
+query carts {
+  carts {
+    id
+    userId
+    active
+  }
+}

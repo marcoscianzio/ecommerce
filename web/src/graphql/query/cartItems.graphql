@@ -1,0 +1,14 @@
+query cartItems {
+  cartItems {
+    cartId
+    itemId
+    item {
+      name
+      description
+      unitAmount
+    }
+    quantity
+    total
+    totalAmount
+  }
+}

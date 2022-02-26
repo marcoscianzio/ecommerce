@@ -1,0 +1,15 @@
+query myFavorites {
+  myFavorites {
+    id
+    name
+    description
+    available
+    unitAmount
+    stripeId
+    images {
+      id
+      url
+    }
+    stock
+  }
+}

@@ -1,0 +1,16 @@
+query items {
+  items {
+    id
+    name
+    description
+    unitAmount
+    images {
+      id
+      url
+    }
+    liked
+    stock
+    createdAt
+    updatedAt
+  }
+}

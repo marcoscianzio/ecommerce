@@ -1,0 +1,18 @@
+mutation Login($values: UserInput!) {
+  login(values: $values) {
+    errors {
+      message
+      field
+    }
+    user {
+      id
+      email
+      stripeId
+      createdAt
+      updatedAt
+      activeCart {
+        itemCount
+      }
+    }
+  }
+}

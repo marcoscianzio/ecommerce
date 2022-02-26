@@ -1,0 +1,6 @@
+mutation createCart {
+  createCart {
+    id
+    userId
+  }
+}

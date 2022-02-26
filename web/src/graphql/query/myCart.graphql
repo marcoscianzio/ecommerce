@@ -1,0 +1,28 @@
+query MyCart {
+  myCart {
+    id
+    cartItems {
+      cartId
+      itemId
+      item {
+        id
+        name
+        description
+        stock
+        available
+        unitAmount
+        images {
+          id
+          url
+        }
+      }
+      quantity
+      total
+    }
+    readyForCheckout
+    active
+    itemCount
+    total
+    userId
+  }
+}

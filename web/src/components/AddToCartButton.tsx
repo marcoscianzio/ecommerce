@@ -1,5 +1,6 @@
-import { ApolloCache, gql } from "@apollo/client";
+import { ApolloCache, gql, useApolloClient } from "@apollo/client";
 import { Button, ButtonProps } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import {
   AddItemToCartMutation,
   MeDocument,
@@ -39,7 +40,6 @@ const updateAfterAction = (
     const newStock = item.stock - 1;
     const newAvailable = newStock !== 0;
 
-    console.log({ stock: item.stock, newStock });
     const newItemCount = me.me.activeCart.itemCount + 1;
 
     cache.writeFragment({
@@ -77,12 +77,24 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
   ...props
 }) => {
   const [addItemToCart, { loading }] = useAddItemToCartMutation();
+  const apollo = useApolloClient();
+  const router = useRouter();
 
   return (
     <Button
       {...props}
       variant="primary"
       onClick={async () => {
+        const isAuthenticated = apollo.cache.readQuery({
+          query: MeDocument,
+        }) as any;
+
+        if (!isAuthenticated.me) {
+          router.replace("/login");
+
+          return;
+        }
+
         return await addItemToCart({
           variables: {
             itemId,

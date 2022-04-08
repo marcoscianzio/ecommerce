@@ -9,15 +9,25 @@ import { isAuth } from "../../middleware/isAuth";
 @Resolver()
 export class StripeQuery {
   @UseMiddleware(isAuth)
-  @Query(() => User)
+  @Query(() => Order)
   async checkoutSuccess(
     @Arg("sessionId") sessionId: string,
     @Ctx() { req }: Context
-  ): Promise<User> {
+  ): Promise<Order> {
     const user = await User.findOne(req.session.userId);
 
     if (!user) {
       throw new Error("user not found");
+    }
+
+    const alreadyExists = await Order.findOne({
+      where: {
+        stripeId: sessionId,
+      },
+    });
+
+    if (alreadyExists) {
+      throw new Error("Order already exists");
     }
 
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
@@ -32,7 +42,7 @@ export class StripeQuery {
       await user.save();
     }
 
-    await Order.create({
+    const order = await Order.create({
       userId: req.session.userId,
       cartId: req.session.cartId,
       stripeId: session.id,
@@ -41,10 +51,11 @@ export class StripeQuery {
     await Cart.update(req.session.cartId, {
       active: false,
     });
+
     const cart = await Cart.create({ userId: req.session.userId }).save();
 
     req.session.cartId = cart.id;
 
-    return user;
+    return order;
   }
 }

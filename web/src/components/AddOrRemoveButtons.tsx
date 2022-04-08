@@ -27,7 +27,7 @@ const updateAfterAction = (
     quantity: number;
     total: number;
   }>({
-    id: `CartItem:{"itemId":"${itemId}"}`,
+    id: `CartItem:{"itemId":"${itemId}","cartId":"${cartId}"}`,
     fragment: gql`
       fragment __1 on CartItem {
         quantity
@@ -81,7 +81,9 @@ const updateAfterAction = (
     });
 
     if (data.quantity === 1 && type === "remove") {
-      cache.evict({ id: `CartItem:{"itemId":"${itemId}"}` });
+      cache.evict({
+        id: `CartItem:{"itemId":"${itemId}","cartId":"${cartId}"}`,
+      });
       cache.evict({ id: `Cart:${cartId}` });
       return;
     }
@@ -99,7 +101,7 @@ const updateAfterAction = (
       : cart.total - itemUnitAmount;
 
     cache.writeFragment({
-      id: `CartItem:{"itemId":"${itemId}"}`,
+      id: `CartItem:{"itemId":"${itemId}","cartId":"${cartId}"}`,
       fragment: gql`
         fragment __3 on CartItem {
           quantity

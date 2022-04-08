@@ -112,7 +112,7 @@ const CartModal: React.FC<CartModalProps> = ({}) => {
 
                                 cache.evict({ id: "Cart:" + item.cartId });
                                 cache.evict({
-                                  id: `CartItem:{"itemId":"${item.itemId}"}`,
+                                  id: `CartItem:{"itemId":"${item.itemId}","cartId":"${item.cartId}"}`,
                                 });
                               },
                             });

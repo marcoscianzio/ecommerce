@@ -1,7 +1,8 @@
 query CheckoutSuccess($sessionId: String!) {
   checkoutSuccess(sessionId: $sessionId) {
     id
-    email
     stripeId
+    createdAt
+    updatedAt
   }
 }

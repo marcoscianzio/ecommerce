@@ -61,13 +61,14 @@ let AuthMutation = class AuthMutation {
             };
         }
         const hashedPassword = await bcrypt_1.default.hash(password, 10);
-        const user = await user_1.User.create({
+        const userCreated = await user_1.User.create({
             email,
             password: hashedPassword,
         }).save();
-        const cart = await cart_1.Cart.create({ userId: user.id }).save();
-        req.session.userId = user.id;
+        const cart = await cart_1.Cart.create({ userId: userCreated.id }).save();
+        const user = await user_1.User.findOne({ email });
         req.session.cartId = cart.id;
+        req.session.userId = user.id;
         return { user };
     }
     async login({ email, password }, { req }) {
@@ -100,6 +101,17 @@ let AuthMutation = class AuthMutation {
         req.session.cartId = cart.id;
         return { user };
     }
+    async logout({ req, res }) {
+        return new Promise((res) => {
+            req.session.destroy((err) => {
+                if (err) {
+                    res(false);
+                    return;
+                }
+                res(true);
+            });
+        });
+    }
 };
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
@@ -117,6 +129,13 @@ __decorate([
     __metadata("design:paramtypes", [auth_1.UserInput, Object]),
     __metadata("design:returntype", Promise)
 ], AuthMutation.prototype, "login", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Boolean),
+    __param(0, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthMutation.prototype, "logout", null);
 AuthMutation = __decorate([
     (0, type_graphql_1.Resolver)(user_1.User)
 ], AuthMutation);

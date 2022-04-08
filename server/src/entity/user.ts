@@ -33,13 +33,6 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   stripeId: string;
 
-  @Field(() => [Item], { nullable: true })
-  @ManyToMany(() => Item, (item) => item.userFavorites, {
-    nullable: true,
-  })
-  @JoinTable()
-  favorites: Item[];
-
   @Field(() => Cart)
   activeCart: Cart;
 

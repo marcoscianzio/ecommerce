@@ -46,7 +46,6 @@ let StripeMutation = class StripeMutation {
             success_url: "http://localhost:3000/success/{CHECKOUT_SESSION_ID}",
         });
         const url = session.url;
-        console.log(url);
         return url;
     }
 };

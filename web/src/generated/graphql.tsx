@@ -74,13 +74,11 @@ export type Item = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   images: Array<Image>;
-  liked: Scalars['Boolean'];
   name: Scalars['String'];
   stock: Scalars['Float'];
   stripeId: Scalars['String'];
   unitAmount: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
-  userFavorites?: Maybe<Array<User>>;
 };
 
 export type ItemImage = {
@@ -95,9 +93,9 @@ export type Mutation = {
   createItem: Item;
   deleteItem: Scalars['Boolean'];
   login: UserResponse;
+  logout: Scalars['Boolean'];
   register: UserResponse;
   removeItemFromCart: Scalars['Boolean'];
-  toggleFavoriteItem: Scalars['Boolean'];
 };
 
 
@@ -131,11 +129,6 @@ export type MutationRemoveItemFromCartArgs = {
   whole?: InputMaybe<Scalars['Boolean']>;
 };
 
-
-export type MutationToggleFavoriteItemArgs = {
-  id: Scalars['String'];
-};
-
 export type Order = {
   __typename?: 'Order';
   cart: Cart;
@@ -152,12 +145,11 @@ export type Query = {
   __typename?: 'Query';
   cartItems: Array<CartItem>;
   carts: Array<Cart>;
-  checkoutSuccess: User;
+  checkoutSuccess: Order;
   item?: Maybe<Item>;
   items: Array<Item>;
   me?: Maybe<User>;
   myCart?: Maybe<Cart>;
-  myFavorites: Array<Item>;
   myOrders: Array<Order>;
   order?: Maybe<Order>;
   orders: Array<Order>;
@@ -184,7 +176,6 @@ export type User = {
   carts?: Maybe<Array<Cart>>;
   createdAt: Scalars['DateTime'];
   email: Scalars['String'];
-  favorites?: Maybe<Array<Item>>;
   id: Scalars['String'];
   orders?: Maybe<Array<Order>>;
   stripeId?: Maybe<Scalars['String']>;
@@ -240,6 +231,11 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', message: string, field: string }> | null, user?: { __typename?: 'User', id: string, email: string, stripeId?: string | null, createdAt: any, updatedAt: any, activeCart: { __typename?: 'Cart', itemCount: number } } | null } };
 
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
+
 export type RegisterMutationVariables = Exact<{
   values: UserInput;
 }>;
@@ -254,13 +250,6 @@ export type RemoveItemFromCartMutationVariables = Exact<{
 
 
 export type RemoveItemFromCartMutation = { __typename?: 'Mutation', removeItemFromCart: boolean };
-
-export type ToggleFavoriteMutationVariables = Exact<{
-  toggleFavoriteItemId: Scalars['String'];
-}>;
-
-
-export type ToggleFavoriteMutation = { __typename?: 'Mutation', toggleFavoriteItem: boolean };
 
 export type CartItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -277,19 +266,19 @@ export type CheckoutSuccessQueryVariables = Exact<{
 }>;
 
 
-export type CheckoutSuccessQuery = { __typename?: 'Query', checkoutSuccess: { __typename?: 'User', id: string, email: string, stripeId?: string | null } };
+export type CheckoutSuccessQuery = { __typename?: 'Query', checkoutSuccess: { __typename?: 'Order', id: string, stripeId: string, createdAt: any, updatedAt: any } };
 
 export type ItemQueryVariables = Exact<{
   itemId: Scalars['String'];
 }>;
 
 
-export type ItemQuery = { __typename?: 'Query', item?: { __typename?: 'Item', id: string, name: string, description?: string | null, unitAmount: number, liked: boolean, available: boolean, stock: number, createdAt: any, updatedAt: any, images: Array<{ __typename?: 'Image', id: string, url: string }> } | null };
+export type ItemQuery = { __typename?: 'Query', item?: { __typename?: 'Item', id: string, name: string, description?: string | null, unitAmount: number, available: boolean, stock: number, createdAt: any, updatedAt: any, images: Array<{ __typename?: 'Image', id: string, url: string }> } | null };
 
 export type ItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ItemsQuery = { __typename?: 'Query', items: Array<{ __typename?: 'Item', id: string, name: string, description?: string | null, unitAmount: number, liked: boolean, stock: number, createdAt: any, updatedAt: any, images: Array<{ __typename?: 'Image', id: string, url: string }> }> };
+export type ItemsQuery = { __typename?: 'Query', items: Array<{ __typename?: 'Item', id: string, name: string, description?: string | null, unitAmount: number, stock: number, createdAt: any, updatedAt: any, images: Array<{ __typename?: 'Image', id: string, url: string }> }> };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -301,15 +290,10 @@ export type MyCartQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MyCartQuery = { __typename?: 'Query', myCart?: { __typename?: 'Cart', id: string, readyForCheckout: boolean, active: boolean, itemCount: number, total: number, userId: string, cartItems?: Array<{ __typename?: 'CartItem', cartId: string, itemId: string, quantity: number, total: number, item: { __typename?: 'Item', id: string, name: string, description?: string | null, stock: number, available: boolean, unitAmount: number, images: Array<{ __typename?: 'Image', id: string, url: string }> } }> | null } | null };
 
-export type MyFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type MyFavoritesQuery = { __typename?: 'Query', myFavorites: Array<{ __typename?: 'Item', id: string, name: string, description?: string | null, available: boolean, unitAmount: number, stripeId: string, stock: number, images: Array<{ __typename?: 'Image', id: string, url: string }> }> };
-
 export type MyOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyOrdersQuery = { __typename?: 'Query', myOrders: Array<{ __typename?: 'Order', id: string, stripeId: string, userId: string, cartId: string, cart: { __typename?: 'Cart', id: string, userId: string, total: number, cartItems?: Array<{ __typename?: 'CartItem', itemId: string, total: number, item: { __typename?: 'Item', id: string, name: string, stripeId: string, description?: string | null, unitAmount: number } }> | null } }> };
+export type MyOrdersQuery = { __typename?: 'Query', myOrders: Array<{ __typename?: 'Order', id: string, stripeId: string, userId: string, cartId: string, createdAt: any, cart: { __typename?: 'Cart', id: string, userId: string, itemCount: number, total: number, cartItems?: Array<{ __typename?: 'CartItem', cartId: string, itemId: string, total: number, quantity: number, item: { __typename?: 'Item', id: string, name: string, stripeId: string, description?: string | null, unitAmount: number, images: Array<{ __typename?: 'Image', url: string }> } }> | null } }> };
 
 
 export const AddItemToCartDocument = gql`
@@ -527,6 +511,36 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const RegisterDocument = gql`
     mutation Register($values: UserInput!) {
   register(values: $values) {
@@ -605,37 +619,6 @@ export function useRemoveItemFromCartMutation(baseOptions?: Apollo.MutationHookO
 export type RemoveItemFromCartMutationHookResult = ReturnType<typeof useRemoveItemFromCartMutation>;
 export type RemoveItemFromCartMutationResult = Apollo.MutationResult<RemoveItemFromCartMutation>;
 export type RemoveItemFromCartMutationOptions = Apollo.BaseMutationOptions<RemoveItemFromCartMutation, RemoveItemFromCartMutationVariables>;
-export const ToggleFavoriteDocument = gql`
-    mutation toggleFavorite($toggleFavoriteItemId: String!) {
-  toggleFavoriteItem(id: $toggleFavoriteItemId)
-}
-    `;
-export type ToggleFavoriteMutationFn = Apollo.MutationFunction<ToggleFavoriteMutation, ToggleFavoriteMutationVariables>;
-
-/**
- * __useToggleFavoriteMutation__
- *
- * To run a mutation, you first call `useToggleFavoriteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useToggleFavoriteMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [toggleFavoriteMutation, { data, loading, error }] = useToggleFavoriteMutation({
- *   variables: {
- *      toggleFavoriteItemId: // value for 'toggleFavoriteItemId'
- *   },
- * });
- */
-export function useToggleFavoriteMutation(baseOptions?: Apollo.MutationHookOptions<ToggleFavoriteMutation, ToggleFavoriteMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ToggleFavoriteMutation, ToggleFavoriteMutationVariables>(ToggleFavoriteDocument, options);
-      }
-export type ToggleFavoriteMutationHookResult = ReturnType<typeof useToggleFavoriteMutation>;
-export type ToggleFavoriteMutationResult = Apollo.MutationResult<ToggleFavoriteMutation>;
-export type ToggleFavoriteMutationOptions = Apollo.BaseMutationOptions<ToggleFavoriteMutation, ToggleFavoriteMutationVariables>;
 export const CartItemsDocument = gql`
     query cartItems {
   cartItems {
@@ -719,8 +702,9 @@ export const CheckoutSuccessDocument = gql`
     query CheckoutSuccess($sessionId: String!) {
   checkoutSuccess(sessionId: $sessionId) {
     id
-    email
     stripeId
+    createdAt
+    updatedAt
   }
 }
     `;
@@ -763,7 +747,6 @@ export const ItemDocument = gql`
       id
       url
     }
-    liked
     available
     stock
     createdAt
@@ -810,7 +793,6 @@ export const ItemsDocument = gql`
       id
       url
     }
-    liked
     stock
     createdAt
     updatedAt
@@ -940,50 +922,6 @@ export function useMyCartLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyC
 export type MyCartQueryHookResult = ReturnType<typeof useMyCartQuery>;
 export type MyCartLazyQueryHookResult = ReturnType<typeof useMyCartLazyQuery>;
 export type MyCartQueryResult = Apollo.QueryResult<MyCartQuery, MyCartQueryVariables>;
-export const MyFavoritesDocument = gql`
-    query myFavorites {
-  myFavorites {
-    id
-    name
-    description
-    available
-    unitAmount
-    stripeId
-    images {
-      id
-      url
-    }
-    stock
-  }
-}
-    `;
-
-/**
- * __useMyFavoritesQuery__
- *
- * To run a query within a React component, call `useMyFavoritesQuery` and pass it any options that fit your needs.
- * When your component renders, `useMyFavoritesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMyFavoritesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useMyFavoritesQuery(baseOptions?: Apollo.QueryHookOptions<MyFavoritesQuery, MyFavoritesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<MyFavoritesQuery, MyFavoritesQueryVariables>(MyFavoritesDocument, options);
-      }
-export function useMyFavoritesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyFavoritesQuery, MyFavoritesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<MyFavoritesQuery, MyFavoritesQueryVariables>(MyFavoritesDocument, options);
-        }
-export type MyFavoritesQueryHookResult = ReturnType<typeof useMyFavoritesQuery>;
-export type MyFavoritesLazyQueryHookResult = ReturnType<typeof useMyFavoritesLazyQuery>;
-export type MyFavoritesQueryResult = Apollo.QueryResult<MyFavoritesQuery, MyFavoritesQueryVariables>;
 export const MyOrdersDocument = gql`
     query myOrders {
   myOrders {
@@ -995,6 +933,7 @@ export const MyOrdersDocument = gql`
       id
       userId
       cartItems {
+        cartId
         itemId
         item {
           id
@@ -1002,11 +941,17 @@ export const MyOrdersDocument = gql`
           stripeId
           description
           unitAmount
+          images {
+            url
+          }
         }
         total
+        quantity
       }
+      itemCount
       total
     }
+    createdAt
   }
 }
     `;

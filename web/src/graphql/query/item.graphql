@@ -8,7 +8,6 @@ query Item($itemId: String!) {
       id
       url
     }
-    liked
     available
     stock
     createdAt

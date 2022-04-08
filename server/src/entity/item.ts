@@ -47,18 +47,9 @@ export class Item extends BaseEntity {
   })
   images: Image[];
 
-  @Field(() => [User], { nullable: true })
-  @ManyToMany(() => User, (user) => user.favorites, {
-    nullable: true,
-  })
-  userFavorites: User[];
-
   @Field()
   @Column()
   stock: number;
-
-  @Field()
-  liked: boolean;
 
   @Field(() => [CartItem])
   @OneToMany(() => CartItem, (cartItem) => cartItem.item)

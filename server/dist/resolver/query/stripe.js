@@ -25,6 +25,14 @@ let StripeQuery = class StripeQuery {
         if (!user) {
             throw new Error("user not found");
         }
+        const alreadyExists = await order_1.Order.findOne({
+            where: {
+                stripeId: sessionId,
+            },
+        });
+        if (alreadyExists) {
+            throw new Error("Order already exists");
+        }
         const session = await stripe_1.stripe.checkout.sessions.retrieve(sessionId, {
             expand: ["line_items"],
         });
@@ -33,7 +41,7 @@ let StripeQuery = class StripeQuery {
             user.stripeId = customer.id;
             await user.save();
         }
-        await order_1.Order.create({
+        const order = await order_1.Order.create({
             userId: req.session.userId,
             cartId: req.session.cartId,
             stripeId: session.id,
@@ -43,12 +51,12 @@ let StripeQuery = class StripeQuery {
         });
         const cart = await cart_1.Cart.create({ userId: req.session.userId }).save();
         req.session.cartId = cart.id;
-        return user;
+        return order;
     }
 };
 __decorate([
     (0, type_graphql_1.UseMiddleware)(isAuth_1.isAuth),
-    (0, type_graphql_1.Query)(() => user_1.User),
+    (0, type_graphql_1.Query)(() => order_1.Order),
     __param(0, (0, type_graphql_1.Arg)("sessionId")),
     __param(1, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),

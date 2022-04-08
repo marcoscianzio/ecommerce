@@ -41,8 +41,6 @@ export class StripeMutation {
 
     const url = session.url as string;
 
-    console.log(url);
-
     return url;
   }
 }

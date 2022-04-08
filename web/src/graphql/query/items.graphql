@@ -8,7 +8,6 @@ query items {
       id
       url
     }
-    liked
     stock
     createdAt
     updatedAt

@@ -14,7 +14,6 @@ const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const cartItem_1 = require("./cartItem");
 const image_1 = require("./image");
-const user_1 = require("./user");
 let Item = class Item extends typeorm_1.BaseEntity {
     afterLoadFunctions() {
         this.available = this.stock !== 0;
@@ -58,21 +57,10 @@ __decorate([
     __metadata("design:type", Array)
 ], Item.prototype, "images", void 0);
 __decorate([
-    (0, type_graphql_1.Field)(() => [user_1.User], { nullable: true }),
-    (0, typeorm_1.ManyToMany)(() => user_1.User, (user) => user.favorites, {
-        nullable: true,
-    }),
-    __metadata("design:type", Array)
-], Item.prototype, "userFavorites", void 0);
-__decorate([
     (0, type_graphql_1.Field)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Item.prototype, "stock", void 0);
-__decorate([
-    (0, type_graphql_1.Field)(),
-    __metadata("design:type", Boolean)
-], Item.prototype, "liked", void 0);
 __decorate([
     (0, type_graphql_1.Field)(() => [cartItem_1.CartItem]),
     (0, typeorm_1.OneToMany)(() => cartItem_1.CartItem, (cartItem) => cartItem.item),

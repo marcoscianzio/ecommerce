@@ -45,15 +45,17 @@ export class AuthMutation {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    const userCreated = await User.create({
       email,
       password: hashedPassword,
     }).save();
 
-    const cart = await Cart.create({ userId: user.id }).save();
+    const cart = await Cart.create({ userId: userCreated.id }).save();
 
-    req.session.userId = user.id;
+    const user = await User.findOne({ email });
+
     req.session.cartId = cart.id;
+    req.session.userId = user!.id;
 
     return { user };
   }
@@ -97,5 +99,18 @@ export class AuthMutation {
     req.session.cartId = cart!.id;
 
     return { user };
+  }
+
+  @Mutation(() => Boolean)
+  async logout(@Ctx() { req, res }: Context): Promise<Boolean> {
+    return new Promise((res) => {
+      req.session.destroy((err) => {
+        if (err) {
+          res(false);
+          return;
+        }
+        res(true);
+      });
+    });
   }
 }

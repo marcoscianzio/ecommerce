@@ -13,13 +13,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ItemMutation = void 0;
-const isAuth_1 = require("../../middleware/isAuth");
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const image_1 = require("../../entity/image");
 const item_1 = require("../../entity/item");
-const user_1 = require("../../entity/user");
 const item_2 = require("../../inputs/item");
+const isAuth_1 = require("../../middleware/isAuth");
 const stripe_1 = require("../../stripe");
 let ItemMutation = class ItemMutation {
     async createItem({ images, name, stock, description, unitAmount }) {
@@ -48,33 +47,8 @@ let ItemMutation = class ItemMutation {
         await item_1.Item.delete(id);
         return true;
     }
-    async toggleFavoriteItem(id, { req }) {
-        const me = await user_1.User.findOne(req.session.userId);
-        const item = await item_1.Item.findOne(id);
-        if (!item) {
-            throw new Error("Item not found");
-        }
-        try {
-            await (0, typeorm_1.getConnection)()
-                .createQueryBuilder()
-                .relation(user_1.User, "favorites")
-                .of(me)
-                .add(item);
-        }
-        catch (error) {
-            if (error.code === "ER_DUP_ENTRY") {
-                await (0, typeorm_1.getConnection)()
-                    .createQueryBuilder()
-                    .relation(user_1.User, "favorites")
-                    .of(me)
-                    .remove(item);
-            }
-        }
-        return true;
-    }
 };
 __decorate([
-    (0, type_graphql_1.UseMiddleware)(isAuth_1.isAuth),
     (0, type_graphql_1.Mutation)(() => item_1.Item),
     __param(0, (0, type_graphql_1.Arg)("values")),
     __metadata("design:type", Function),
@@ -89,15 +63,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ItemMutation.prototype, "deleteItem", null);
-__decorate([
-    (0, type_graphql_1.UseMiddleware)(isAuth_1.isAuth),
-    (0, type_graphql_1.Mutation)(() => Boolean),
-    __param(0, (0, type_graphql_1.Arg)("id")),
-    __param(1, (0, type_graphql_1.Ctx)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
-], ItemMutation.prototype, "toggleFavoriteItem", null);
 ItemMutation = __decorate([
     (0, type_graphql_1.Resolver)()
 ], ItemMutation);

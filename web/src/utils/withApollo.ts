@@ -6,7 +6,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache({
     typePolicies: {
       CartItem: {
-        keyFields: ["itemId"],
+        keyFields: ["itemId", "cartId"],
       },
     },
   }),

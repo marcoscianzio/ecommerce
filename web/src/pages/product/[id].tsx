@@ -14,7 +14,6 @@ import { useState } from "react";
 import ReactSlidy from "react-slidy";
 import AddToCartButton from "../../components/AddToCartButton";
 import Layout from "../../components/Layout";
-import ToggleFavoriteButton from "../../components/ToggleFavoriteButton";
 import { useItemQuery } from "../../generated/graphql";
 import { withApollo } from "../../utils/withApollo";
 
@@ -52,7 +51,12 @@ const Product: React.FC<ProductProps> = ({}) => {
         <Stack w="60%" h="calc(100vh - 3rem - 5rem)">
           <ReactSlidy doAfterSlide={updateSlide} slide={actualSlide}>
             {data.item.images.map(({ id, url }) => (
-              <Image objectFit="cover" w="60%" key={id} src={url} />
+              <Stack
+                bgSize="cover"
+                h="800px"
+                key={id}
+                bgImage={`url(${url})`}
+              />
             ))}
           </ReactSlidy>
           <HStack spacing={4}>
@@ -86,10 +90,6 @@ const Product: React.FC<ProductProps> = ({}) => {
               <Heading wordBreak="break-all" fontSize="6xl">
                 {data?.item?.name}
               </Heading>
-              <ToggleFavoriteButton
-                itemId={data.item.id}
-                liked={data.item.liked}
-              />
             </HStack>
 
             <Divider></Divider>

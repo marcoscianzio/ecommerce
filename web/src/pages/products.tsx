@@ -1,18 +1,20 @@
 import {
-  Button,
   Divider,
+  FormControl,
+  FormLabel,
   Heading,
   HStack,
+  Input,
   SimpleGrid,
   Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { Form, Formik } from "formik";
+import Fuse from "fuse.js";
 import Link from "next/link";
-import InputField from "../components/InputField";
+import React, { useEffect, useState } from "react";
+import ErrorAlert from "../components/ErrorAlert";
 import Layout from "../components/Layout";
-import ToggleFavoriteButton from "../components/ToggleFavoriteButton";
 import { useItemsQuery } from "../generated/graphql";
 import { withApollo } from "../utils/withApollo";
 
@@ -20,6 +22,39 @@ interface ProductsProps {}
 
 export const Products: React.FC<ProductsProps> = ({}) => {
   const { loading, data, error } = useItemsQuery();
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState(data?.items);
+
+  if (error) {
+    return <ErrorAlert error={error.message} />;
+  }
+
+  useEffect(() => {
+    if (!loading && data?.items) {
+      setProducts(data.items);
+    }
+  }, [loading, data]);
+
+  useEffect(() => {
+    if (search && products && Boolean(products.length)) {
+      const fuse = new Fuse(products, {
+        keys: ["name", "description"],
+      });
+
+      const result = fuse.search(search);
+
+      const newProducts = result.map((item) => item.item);
+
+      setProducts(() => newProducts);
+    } else {
+      setProducts(data?.items);
+    }
+  }),
+    [search];
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(() => e.target.value);
+  };
 
   return (
     <Layout>
@@ -36,27 +71,18 @@ export const Products: React.FC<ProductsProps> = ({}) => {
         <Divider></Divider>
 
         <Stack>
-          <Formik
-            initialValues={{
-              search: "",
-            }}
-            onSubmit={() => {}}
-          >
-            {() => (
-              <HStack as={Form}>
-                <InputField name="search" />
-                <Button w="20%" variant="primary">
-                  search
-                </Button>
-              </HStack>
-            )}
-          </Formik>
+          <HStack>
+            <FormControl variant="floating">
+              <Input onChange={handleSearch} placeholder=" " />
+              <FormLabel htmlFor="search">search</FormLabel>
+            </FormControl>
+          </HStack>
         </Stack>
         <SimpleGrid columns={4} spacing={10}>
-          {loading && !error ? (
+          {loading ? (
             <Spinner></Spinner>
           ) : (
-            data?.items.map((item) => (
+            products?.map((item) => (
               <Link key={item.id} href={`/product/${item.id}`}>
                 <Stack
                   pb={4}
@@ -69,24 +95,13 @@ export const Products: React.FC<ProductsProps> = ({}) => {
                     borderWidth: 1,
                     borderColor: "palette.400",
                   }}
-                  onClick={() => {}}
                 >
                   <Stack
-                    position="relative"
                     bgSize="cover"
                     bgPos="center"
                     h="30em"
                     bgImage={`url(${item.images[0].url})`}
-                  >
-                    <ToggleFavoriteButton
-                      itemId={item.id}
-                      liked={item.liked}
-                      top={8}
-                      right={10}
-                      position="absolute"
-                      color="palette.bg"
-                    />
-                  </Stack>
+                  ></Stack>
 
                   <HStack px={2} justify="space-between">
                     <Text fontFamily="Basement Grotesque Black">

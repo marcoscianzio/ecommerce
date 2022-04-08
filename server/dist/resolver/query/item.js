@@ -16,26 +16,7 @@ exports.ItemQuery = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const item_1 = require("../../entity/item");
-const user_1 = require("../../entity/user");
 let ItemQuery = class ItemQuery {
-    async liked(item, { req }) {
-        let liked;
-        if (!req.session.userId) {
-            return false;
-        }
-        const likes = await (0, typeorm_1.getConnection)()
-            .createQueryBuilder()
-            .relation(user_1.User, "favorites")
-            .of(req.session.userId)
-            .loadMany();
-        console.log(likes);
-        likes.length > 0
-            ? likes.forEach((like) => {
-                liked = like.id === item.id;
-            })
-            : (liked = false);
-        return liked;
-    }
     async items() {
         return await item_1.Item.find({
             where: {
@@ -55,14 +36,6 @@ let ItemQuery = class ItemQuery {
         return item;
     }
 };
-__decorate([
-    (0, type_graphql_1.FieldResolver)(),
-    __param(0, (0, type_graphql_1.Root)()),
-    __param(1, (0, type_graphql_1.Ctx)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [item_1.Item, Object]),
-    __metadata("design:returntype", Promise)
-], ItemQuery.prototype, "liked", null);
 __decorate([
     (0, type_graphql_1.Query)(() => [item_1.Item]),
     __metadata("design:type", Function),

@@ -1,35 +1,9 @@
-import { Arg, Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql";
-import { Equal, getConnection, Not } from "typeorm";
+import { Arg, Query, Resolver } from "type-graphql";
+import { Equal, Not } from "typeorm";
 import { Item } from "../../entity/item";
-import { User } from "../../entity/user";
-import { Context } from "../../types";
 
 @Resolver(Item)
 export class ItemQuery {
-  @FieldResolver()
-  async liked(@Root() item: Item, @Ctx() { req }: Context) {
-    let liked;
-    if (!req.session.userId) {
-      return false;
-    }
-
-    const likes = await getConnection()
-      .createQueryBuilder()
-      .relation(User, "favorites")
-      .of(req.session.userId)
-      .loadMany();
-
-    console.log(likes);
-
-    likes.length > 0
-      ? likes.forEach((like) => {
-          liked = like.id === item.id;
-        })
-      : (liked = false);
-
-    return liked;
-  }
-
   @Query(() => [Item])
   async items(): Promise<Item[]> {
     return await Item.find({

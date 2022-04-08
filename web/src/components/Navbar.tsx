@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import {
   Button,
   ButtonGroup,
@@ -14,11 +15,17 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { FiHeart, FiTruck, FiUser } from "react-icons/fi";
-import { useMeQuery } from "../generated/graphql";
+import {
+  MeDocument,
+  useLogoutMutation,
+  useMeQuery,
+} from "../generated/graphql";
 import CartModal from "./CartModal";
 
 const Navbar: React.FC<{}> = () => {
   const { data, loading } = useMeQuery();
+  const [logout] = useLogoutMutation();
+  const apollo = useApolloClient();
   let component: React.ReactNode;
 
   if (loading) {
@@ -39,9 +46,6 @@ const Navbar: React.FC<{}> = () => {
       <HStack spacing={8}>
         <Link href="/orders">
           <Icon cursor="pointer" boxSize={8} color="palette.400" as={FiTruck} />
-        </Link>
-        <Link href="/favorites">
-          <Icon cursor="pointer" boxSize={8} color="palette.400" as={FiHeart} />
         </Link>
 
         <Stack position="relative">
@@ -67,7 +71,18 @@ const Navbar: React.FC<{}> = () => {
             <Icon display="block" boxSize={8} color="palette.400" as={FiUser} />
           </MenuButton>
           <MenuList>
-            <MenuItem>logout</MenuItem>
+            <MenuItem
+              onClick={async () => {
+                await logout({
+                  update: async (cache) => {
+                    await apollo.resetStore();
+                    cache.reset();
+                  },
+                });
+              }}
+            >
+              logout
+            </MenuItem>
           </MenuList>
         </Menu>
       </HStack>

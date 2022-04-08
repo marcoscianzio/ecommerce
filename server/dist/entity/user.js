@@ -13,7 +13,6 @@ exports.User = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const cart_1 = require("./cart");
-const item_1 = require("./item");
 const order_1 = require("./order");
 let User = class User extends typeorm_1.BaseEntity {
     async aferLoadActions() {
@@ -45,14 +44,6 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "stripeId", void 0);
-__decorate([
-    (0, type_graphql_1.Field)(() => [item_1.Item], { nullable: true }),
-    (0, typeorm_1.ManyToMany)(() => item_1.Item, (item) => item.userFavorites, {
-        nullable: true,
-    }),
-    (0, typeorm_1.JoinTable)(),
-    __metadata("design:type", Array)
-], User.prototype, "favorites", void 0);
 __decorate([
     (0, type_graphql_1.Field)(() => cart_1.Cart),
     __metadata("design:type", cart_1.Cart)

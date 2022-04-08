@@ -86,6 +86,14 @@ const theme = extendTheme({
             color: "palette.400",
           },
         },
+        error: {
+          bg: "red.400",
+          color: "white",
+          _hover: {
+            bg: "red.500",
+          },
+        },
+
         secondary: {
           color: "palette.400",
           borderColor: "palette.300",
